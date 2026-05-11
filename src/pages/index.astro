@@ -1,0 +1,397 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Creekside Daze | Ellijay Cabin Rental">
+	<main>
+		<section class="hero">
+			<!-- Desktop Video (16:9 or 21:9) -->
+			<video 
+				autoplay 
+				muted 
+				loop 
+				playsinline 
+				class="hero-video desktop-only">
+				<source src="/hero-desktop.mp4" type="video/mp4" />
+			</video>
+
+			<!-- Mobile Video (9:16 Vertical) -->
+			<video 
+				autoplay 
+				muted 
+				loop 
+				playsinline 
+				class="hero-video mobile-only">
+				<source src="/hero-mobile.mp4" type="video/mp4" />
+			</video>
+			<div class="hero-overlay">
+
+			<div class="content reveal">
+				<p class="pre-title">Welcome to Creekside Daze</p>
+				<h1>Where time drifts slowly</h1>
+				<div class="cta-group">
+					<a href="/creekside" class="primary-btn">Explore The Cabin</a>
+					<button 
+						class="secondary-btn" 
+						onclick="document.getElementById('booking').scrollIntoView({ behavior: 'smooth' })"
+					>
+						Check Availability
+					</button>
+				</div>
+			</div>
+		</section>
+
+		<section id="booking" class="hostaway-section reveal">
+			<div class="calendar-box">
+				<h2 class="section-title">Check Availability</h2>
+				<!-- Wrapper to isolate styles -->
+				<div id="hostaway-container">
+					<div id="hostaway-calendar-widget">
+						<script is:inline src="https://d2q3n06xhbi0am.cloudfront.net/calendar.js"></script>
+						<script is:inline>
+						window.hostawayCalendarWidget({
+							baseUrl: 'https://nomadpropertiescabinrentals.holidayfuture.com/',
+							listingId: 483367,
+							numberOfMonths: 2,
+							openInNewTab: true,
+							font: 'Inter',
+							rounded: true,
+							button: { action: 'checkout', text: 'Book now' },
+							clearButtonText: 'Clear dates',
+							color: { mainColor: '#2d3e33', frameColor: '#2d3e33', textColor: '#2d3e33' },
+						})
+						</script>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="hostaway-section reveal">
+			<div class="calendar-box"> <!-- Reuse your existing calendar styling -->
+				<div class="map-header">
+				<h2 class="section-title">The Location</h2>
+				<p class="location-subtitle">Mountaintown Creek, Ellijay</p>
+				</div>
+				
+				<div id="leaflet-map"></div>
+			</div>
+		</section>
+
+		<!-- Leaflet CSS & JS -->
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+		<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+	</main>
+
+	<script>
+		// Observer for the reveal animations[cite: 3]
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) entry.target.classList.add('active');
+			});
+		}, { threshold: 0.1 });
+
+		document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+	</script>
+
+	<script is:inline>
+		document.addEventListener('DOMContentLoaded', () => {
+			// 1. Init map
+			const map = L.map('leaflet-map', {
+			scrollWheelZoom: false,
+			zoomControl: false // Cleaner look; we can add it back if you want
+			}).setView([34.69177, -84.54723], 13);
+
+			// 2. Add Tiles
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; OSM'
+			}).addTo(map);
+
+			// 3. Custom CSS Circle Marker (Matches your Forest theme)
+			const icon = L.divIcon({
+			className: 'custom-div-icon',
+			html: "<div style='background-color:#2d3e33; width:15px; height:15px; border-radius:50%; border:2px solid white; box-shadow:0 0 10px rgba(0,0,0,0.3);'></div>",
+			iconSize: [15, 15],
+			iconAnchor: [7, 7]
+			});
+
+			L.marker([34.69177, -84.54723], { icon: icon }).addTo(map);
+		});
+	</script>
+
+</Layout>
+
+<style is:global>
+	/* Hero Section Styles[cite: 2] */
+	.hero {
+		position: relative;
+		height: 100vh;
+		width: 100%;
+		overflow: hidden;
+		background-color: #2d3e33; /* Forest fallback */
+	}
+
+	.hero-video {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transform: translate(-50%, -50%);
+		z-index: 1; /* Lowest layer */
+	}
+
+	.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Changed to a light cream tint to help black text stand out against dark video parts */
+    background: rgba(244, 241, 234, 0.2); 
+    text-align: center;
+  }
+
+  .hero-content {
+    /* Using your Forest Green as the 'black' for better brand cohesion */
+    color: #2d3e33 !important; 
+    max-width: 800px;
+    padding: 0 2rem;
+  }
+
+  .hero-title {
+    font-family: 'Lora', serif;
+    font-size: clamp(2.5rem, 10vw, 5rem);
+    margin: 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    /* Soft light shadow to keep text crisp over dark moving images */
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3); 
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #2d3e33;
+  }
+
+  .eyebrow {
+    color: #5d7063; /* Muted sage for the eyebrow text */
+    font-weight: 600;
+  }
+
+	/* Responsive Switching Logic */
+	.desktop-only { display: block; }
+	.mobile-only { display: none; }
+
+	@media (max-width: 768px) {
+		.desktop-only { display: none; }
+		.mobile-only { display: block; }
+	}
+
+	.content h1 {
+		display: block;
+		width: fit-content;
+		margin: 0.5rem auto 1.5rem;
+		padding: 0.35rem 0.75rem;
+		border-radius: 999px;
+		background: rgba(255,255,255,0.15);
+		border: 1px solid rgba(255,255,255,0.25);
+		font-size: clamp(1.9rem, 7vw, 3.5rem);
+		font-family: 'Lora', serif; /* Using the new layout font */
+		font-weight: 400;
+		text-transform: uppercase;
+		text-align: center;
+	}
+
+	.pre-title {
+		display: block;
+		width: fit-content;
+		margin: 0 auto 0.5rem;
+		padding: 0.3rem 0.6rem;
+		border-radius: 999px;
+		background: rgba(255,255,255,0.85);
+		color: #2d3e33;
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		font-size: 0.78rem;
+		font-family: 'Inter', sans-serif;
+		border: 1px solid rgba(45,62,51,0.12);
+		box-shadow: 0 5px 14px rgba(0,0,0,0.05);
+	}
+
+	/* Buttons[cite: 2] */
+	.cta-group { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+	
+	.primary-btn, .secondary-btn {
+		padding: 1rem 2.5rem;
+		border-radius: 50px;
+		font-size: 1rem;
+		text-decoration: none;
+		transition: all 0.3s ease;
+		cursor: pointer;
+		font-family: 'Inter', sans-serif;
+	}
+
+	.primary-btn { background: #a67c52; color: white; border: none; }
+	.secondary-btn { background: transparent; border: 1px solid white; color: white; }
+	.primary-btn:hover { background: #8e6843; transform: translateY(-2px); }
+
+	/* Booking Section[cite: 2] */
+	/* We use is:global because the widget creates an iframe/shadow DOM 
+       and we need to ensure these styles are "heavy" enough to pierce it */
+
+    #hostaway-container {
+        background-color: #ffffff !important; /* Force a solid white base */
+        padding: 20px;
+        border-radius: 12px;
+        color: #2d3e33 !important; /* Force your Forest green for text */
+    }
+
+    /* Force the calendar day numbers to be visible */
+    #hostaway-calendar-widget .day-number,
+    #hostaway-calendar-widget .day {
+        color: #2d3e33 !important;
+        background-color: transparent !important;
+    }
+
+    /* Fix for the 'white on white' month headers */
+    #hostaway-calendar-widget .month-name,
+    #hostaway-calendar-widget .weekday-label {
+        color: #2d3e33 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Ensure the "Book Now" button remains visible */
+    #hostaway-calendar-widget .btn-primary, 
+    #hostaway-calendar-widget button {
+        background-color: #2d3e33 !important;
+        color: #ffffff !important;
+        border: none !important;
+        opacity: 1 !important;
+    }
+
+    /* Specific fix for the empty/unavailable dates that often turn white */
+    #hostaway-calendar-widget .unavailable {
+        background-color: #f4f1ea !important; /* Your cream color */
+        color: #999 !important;
+        text-decoration: line-through;
+    }
+
+	/* 1. The outer section - ensures the whole block is centered in the layout */
+    .hostaway-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Horizontal center */
+        justify-content: center;
+        padding: 6rem 2rem;
+        width: 100%;
+        max-width: 100vw;
+        overflow: hidden;
+    }
+
+    /* 2. The white box containing the calendar */
+    .calendar-box {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+        width: 100%;
+        max-width: 1100px; /* Adjust this to match your desired width */
+        margin: 0 auto !important; /* Forces centering */
+    }
+
+    /* 3. The actual Hostaway widget code */
+    #hostaway-calendar-widget {
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: center; /* Centers internal inline elements like month names */
+    }
+
+    /* 4. Targeting Hostaway's internal wrapper if it exists */
+    .hostaway-calendar-container, 
+    #hostaway-calendar-widget > div {
+        margin: 0 auto !important;
+    }
+
+	/* Target the SVG elements inside Hostaway's navigation buttons */
+    #hostaway-calendar-widget .next-month svg,
+    #hostaway-calendar-widget .prev-month svg,
+    #hostaway-calendar-widget button svg,
+    #hostaway-calendar-widget [class*="next"] svg,
+    #hostaway-calendar-widget [class*="prev"] svg {
+        fill: #ffffff !important;
+        stroke: #ffffff !important;
+        color: #ffffff !important;
+    }
+
+    /* Force the internal paths of the SVG to be white */
+    #hostaway-calendar-widget svg path,
+    #hostaway-calendar-widget svg circle,
+    #hostaway-calendar-widget svg polyline {
+        fill: #ffffff !important;
+        stroke: #ffffff !important;
+    }
+
+    /* Remove any background color on the button that might be causing a clash */
+    #hostaway-calendar-widget .next-month,
+    #hostaway-calendar-widget .prev-month {
+        background: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+    }
+
+	/* Reuse the existing .calendar-box and .hostaway-section styles 
+     already present in your Layout_2.astro or index.astro */
+
+	.map-header {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	.section-title {
+		color: var(--forest);
+		font-family: 'Lora', serif;
+		font-size: 2.2rem;
+		margin-bottom: 0.5rem;
+		text-align: center;
+	}
+
+	.location-subtitle {
+		color: var(--sage);
+		font-size: 0.9rem;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
+
+	#leaflet-map {
+		height: 450px; /* Adjust to match the height of your calendar */
+		width: 100%;
+		border-radius: 16px;
+		z-index: 1;
+		/* The "Forest & Cream" filter */
+		filter: sepia(0.4) hue-rotate(80deg) contrast(0.9) brightness(1.05);
+	}
+
+	.map-footer {
+		display: flex;
+		justify-content: center;
+		margin-top: 2rem;
+	}
+
+	/* Ensure Leaflet doesn't break the layout */
+	.leaflet-container {
+		background: #fdfcf9 !important; /* Soft cream base for tiles */
+		font-family: 'Inter', sans-serif;
+	}
+</style>

@@ -1,0 +1,100 @@
+---
+// src/components/Footer.astro
+---
+<footer class="property-footer">
+  <div class="footer-content">
+    <span class="subtitle">Looking for a different view?</span>
+    <h2>Visit Grand Daze</h2>
+    <p>Our sister property in the Bahamas is coming soon.</p>
+    
+    <a href="https://granddaze.com" target="_blank" rel="noopener noreferrer" class="footer-btn">
+       Grand Daze Site↗
+    </a>
+
+    <div class="social-links">
+        <a href="https://www.instagram.com/creeksidedaze" target="_blank" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </a>
+        <a href="https://www.facebook.com/people/Creekside-daze/61585931549704/" target="_blank" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+        </a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* Paste all the .property-footer, .footer-content, etc. CSS here */
+  .property-footer {
+    background-color: #2d3e33; /* Deep forest green */
+    color: #fdfcf9;
+    padding: 6rem 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .footer-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .subtitle {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+
+  h2 {
+    font-family: serif;
+    font-size: 2.5rem;
+    margin: 1rem 0;
+  }
+
+  p {
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  .footer-btn {
+    display: inline-block;
+    padding: 1.2rem 2.5rem;
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .footer-btn:hover {
+    background-color: white;
+    color: #2d3e33;
+  }
+
+  .social-links {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .social-links a {
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .social-links a:hover {
+    color: white;
+    transform: translateY(-3px);
+  }
+
+  /* Optional: Add a copyright line at the very bottom */
+  .copyright {
+    margin-top: 4rem;
+    font-size: 0.7rem;
+    opacity: 0.4;
+    letter-spacing: 1px;
+  }
+  /* ... rest of your footer CSS ... */
+</style>

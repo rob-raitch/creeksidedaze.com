@@ -1,0 +1,150 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Gallery from './components/Gallery.astro';
+---
+
+<Layout title="Explore Creekside Daze">
+  <main class="details-page">
+    <section class="intro reveal">
+      <div style="text-align: center;">
+        <span class="eyebrow">Your Home Away From Home</span>
+        <h1>Family Friendly Cabin Rental</h1>
+        <p>Join us at our luxury family vacation rental in Ellijay, Georgia.<br>
+          A place to reconnect, recharge, and enjoy life at a gentler pace.<br>
+        Spacious, comfortable, and designed for unforgettable family moments.</p>
+      </div>
+    </section>
+
+    <section class="parallax-final reveal">
+      <div class="parallax-bg" id="parallax-bg"></div>
+      <div class="parallax-overlay">
+        <h2>Mountaintown Creek is Calling</h2>
+      </div>
+    </section>
+
+    <Gallery />
+
+    </section>
+  </main>
+
+  <script is:inline>
+    // 1. Re-run Reveal Observer for this specific page
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('active');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    // 2. Parallax Logic
+    const bg = document.getElementById('parallax-bg');
+    let ticket = false;
+    function updateParallax() {
+      const parent = bg.parentElement;
+      const rect = parent.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        bg.style.transform = `translate3d(0, ${-(rect.top * 0.25)}px, 0)`;
+      }
+      ticket = false;
+    }
+    document.addEventListener('DOMContentLoaded', updateParallax);
+    window.addEventListener('scroll', () => {
+      if (!ticket) {
+        window.requestAnimationFrame(updateParallax);
+        ticket = true;
+      }
+    }, { passive: true });
+
+    // Filter Logic
+    // 2. Simplified Filter Logic that works with the Lightbox
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const items = document.querySelectorAll('.gallery-item');
+
+      // Make sure all items start as visible for the lightbox
+      items.forEach(item => item.classList.add('is-visible'));
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-filter');
+          
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          items.forEach(item => {
+            const cat = item.getAttribute('data-category');
+            
+            if (filter === 'all' || cat === filter) {
+              item.style.display = 'block';
+              item.classList.add('is-visible');
+            } else {
+              item.style.display = 'none';
+              item.classList.remove('is-visible');
+            }
+          });
+
+          // 3. TELL THE LIGHTBOX TO REFRESH
+          if (typeof initGallery === 'function') {
+            initGallery(); 
+          }
+        });
+      });
+    });
+  </script>
+</Layout>
+
+<style>
+  /* Base Styles */
+  .details-page { padding: 2rem 1rem; max-width: 1200px; margin: 0 auto; color: #2d3e33; }
+  h1 { font-family: 'Lora', serif; font-size: clamp(2rem, 8vw, 3.5rem); margin-bottom: 1.5rem; text-align: center;}
+  .eyebrow { text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem; color: #8ba889; display: block; margin-bottom: 0.5rem; text-align: center;}
+
+  /* Filter UI */
+  .filter-controls { display: flex; justify-content: center; gap: 1rem; margin: 3rem 0; flex-wrap: wrap; }
+  .filter-btn { 
+    background: white; border: 1px solid rgba(0,0,0,0.1); padding: 0.6rem 1.5rem; 
+    border-radius: 30px; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif;
+  }
+  .filter-btn.active { background: #2d3e33; color: white; border-color: #2d3e33; }
+
+  /* Gallery Grid */
+  .gallery-wrapper { column-count: 2; column-gap: 1.5rem; }
+  @media (min-width: 1024px) { .gallery-wrapper { column-count: 3; } }
+
+  /* 1. Force visibility so they don't disappear */
+  .gallery-item {
+    margin-bottom: 1.5rem;
+    break-inside: avoid;
+    display: block; 
+    opacity: 1 !important; /* Force them to show */
+    transform: none !important;
+  }
+
+  .gallery-wrapper { 
+    column-count: 2; 
+    column-gap: 1.5rem; 
+    display: block !important; /* Ensure the container isn't hidden */
+  }
+
+  .gallery-item img {
+    width: 100%;
+    border-radius: 8px;
+    display: block;
+  }
+
+  /* Parallax Container */
+  .parallax-final {
+    position: relative; height: 60vh; margin: 4rem 0; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; border-radius: 12px;
+  }
+  .parallax-bg {
+    position: absolute; top: -20%; left: 0; width: 100%; height: 140%; 
+    background-image: url('/138-web-or-mls-3-print-DJI_20251009034016_0329_D.webp'); background-size: cover; background-position: center;
+    z-index: -1; will-change: transform;
+  }
+  .parallax-overlay h2 {
+    color: #ffffff !important; font-size: clamp(2rem, 6vw, 4rem); text-align: center;
+    font-family: 'Lora', serif; text-transform: uppercase; letter-spacing: 0.1em;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+</style>
