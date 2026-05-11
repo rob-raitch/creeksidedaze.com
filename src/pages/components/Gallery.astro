@@ -1,6 +1,6 @@
 ---
 // src/components/Gallery.astro
-const { BASE_URL } = import.meta.env;
+const baseURL = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 ---
 
 <section class="gallery">
@@ -196,14 +196,14 @@ const { BASE_URL } = import.meta.env;
   </div>
 </section>
 
-<script is:inline define:vars={{BASE_URL}}>
-  // Fix all image paths to use BASE_URL
+<script is:inline define:vars={{baseURL}}>
+  // Fix all image paths to use baseURL
   document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery-wrapper');
     if (gallery) {
       gallery.querySelectorAll('img').forEach(img => {
         if (img.src.startsWith('/') && !img.src.includes('http')) {
-          img.src = BASE_URL + img.src.substring(1);
+          img.src = baseURL + img.src.substring(1);
         }
       });
     }
