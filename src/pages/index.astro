@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+const { BASE_URL } = import.meta.env;
 ---
 
 <Layout title="Creekside Daze | Ellijay Cabin Rental">
@@ -12,7 +13,7 @@ import Layout from '../layouts/Layout.astro';
 				loop 
 				playsinline 
 				class="hero-video desktop-only">
-				<source src="/hero-desktop.mp4" type="video/mp4" />
+				<source src={`${BASE_URL}hero-desktop.mp4`} type="video/mp4" />
 			</video>
 
 			<!-- Mobile Video (9:16 Vertical) -->
@@ -22,7 +23,7 @@ import Layout from '../layouts/Layout.astro';
 				loop 
 				playsinline 
 				class="hero-video mobile-only">
-				<source src="/hero-mobile.mp4" type="video/mp4" />
+				<source src={`${BASE_URL}hero-mobile.mp4`} type="video/mp4" />
 			</video>
 			<div class="hero-overlay">
 
@@ -30,7 +31,7 @@ import Layout from '../layouts/Layout.astro';
 				<p class="pre-title">Welcome to Creekside Daze</p>
 				<h1>Where time drifts slowly</h1>
 				<div class="cta-group">
-					<a href="/creekside" class="primary-btn">Explore The Cabin</a>
+					<a href={`${BASE_URL}creekside`} class="primary-btn">Explore The Cabin</a>
 					<button 
 						class="secondary-btn" 
 						onclick="document.getElementById('booking').scrollIntoView({ behavior: 'smooth' })"

@@ -1,5 +1,6 @@
 ---
 // src/components/Gallery.astro
+const { BASE_URL } = import.meta.env;
 ---
 
 <section class="gallery">
@@ -194,6 +195,20 @@
     <div class="gallery-item is-visible" data-category="creek"><img src="/167-web-or-mls-34-print-DSC_7185.webp" alt="Mountaintown Creek" class="reveal" /></div>
   </div>
 </section>
+
+<script is:inline define:vars={{BASE_URL}}>
+  // Fix all image paths to use BASE_URL
+  document.addEventListener('DOMContentLoaded', () => {
+    const gallery = document.querySelector('.gallery-wrapper');
+    if (gallery) {
+      gallery.querySelectorAll('img').forEach(img => {
+        if (img.src.startsWith('/') && !img.src.includes('http')) {
+          img.src = BASE_URL + img.src.substring(1);
+        }
+      });
+    }
+  });
+</script>
 
 <style>
   .filter-controls { display: flex; justify-content: center; gap: 1rem; margin: 3rem 0; flex-wrap: wrap; }
