@@ -1,0 +1,68 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Credits | Creekside Daze">
+  <main class="guide-page">
+    <header class="guide-header">
+      <span class="eyebrow">Site Credits</span>
+      <h1>Credits</h1>
+      <p>How you are seeing what you are seeing here on the website.</p>
+    </header>
+
+    <section class="link-list">
+      <a class="guide-link" href="https://linkedin.com/in/raitch" target="_blank" rel="noopener noreferrer">
+        Website development by Rob Aitchison (raitch)
+      </a>
+      <a class="guide-link" href="https://exposurevirtualtours.com/" target="_blank" rel="noopener noreferrer">
+        Property Photography by Exposure Virtual Tours
+      </a>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .guide-page {
+    padding: 6rem 2rem 4rem;
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--forest);
+  }
+
+  .guide-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.8rem;
+    color: var(--sage);
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .link-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .guide-link {
+    display: block;
+    padding: 1.5rem 1.75rem;
+    border-radius: 18px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--forest);
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .guide-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  }
+</style>
