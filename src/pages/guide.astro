@@ -4,176 +4,65 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Creekside Daze | Guest Guidebook">
   <main class="guide-page">
-    <header class="guide-header reveal">
+    <header class="guide-header">
       <span class="eyebrow">Guest Resources</span>
-      <h1>Local Guidebook</h1>
-      <p>Suggestions for a memorable stay in Ellijay.</p>
+      <h1>Quick local links</h1>
+      <p>Simple access to the essential spots for your stay.</p>
     </header>
 
-    <section class="guide-interface reveal">
-      <div class="tabs">
-        <button class="tab-trigger active" data-tab="dining">Dining</button>
-        <button class="tab-trigger" data-tab="activities">Activities</button>
-        <button class="tab-trigger" data-tab="explore">Nearby Attractions</button>
-      </div>
-
-      <div class="tab-content active" id="dining">
-        <h3>Pick-up / takeout to bring back to the Daze.</h3>
-        <div class="info-grid">
-          <div class="info-card">
-            <h4>TBD</h4>
-            <p>TBD</p>
-          </div>
-          <div class="info-card">
-            <h4>TBD</h4>
-            <p><code>TBD</code></p>
-          </div>
-        </div>
-        <h3>Dine-in at these great local restaurants.</h3>
-        <div class="info-grid">
-          <div class="info-card">
-            <h4>TBD</h4>
-            <p>TBD</p>
-          </div>
-          <div class="info-card">
-            <h4>TBD</h4>
-            <p><code>TBD</code></p>
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-content" id="activities">
-        <h3>Activities</h3>
-        <ul class="guide-list">
-          <li><strong>Item 1:</strong> enter here</li>
-          <li><strong>Fire Pit:</strong> Please extinguish completely before heading inside.</li>
-          <li><strong>Trash:</strong> Please place all bagged trash in the bear-proof bins.</li>
-        </ul>
-      </div>
-
-      <div class="tab-content" id="explore">
-        <h3>🌲 Local Favorites</h3>
-        <p>Our top picks for a "Daze" in Ellijay:</p>
-        <ul class="guide-list">
-          <li><strong>Coffee:</strong> Ellijay Coffeehouse[cite: 3]</li>
-          <li><strong>Hiking:</strong> Amicalola Falls State Park[cite: 3]</li>
-          <li><strong>Wine:</strong> Engelheim Vineyards[cite: 3]</li>
-        </ul>
-      </div>
+    <section class="link-list">
+      <a class="guide-link" href="https://exploregeorgia.org/city/ellijay" target="_blank" rel="noopener noreferrer">
+        Explore Georgia Ellijay Page
+      </a>
+      <a class="guide-link" href="https://www.gilmerchamber.com/visitors-guide/" target="_blank" rel="noopener noreferrer">
+        Gilmer County Chamber Visitors Guide
+      </a>
     </section>
   </main>
-
-  <script>
-    // Tab Switching Logic[cite: 3]
-    const triggers = document.querySelectorAll('.tab-trigger');
-    const contents = document.querySelectorAll('.tab-content');
-
-    triggers.forEach(trigger => {
-      trigger.addEventListener('click', () => {
-        const target = trigger.getAttribute('data-tab');
-
-        triggers.forEach(t => t.classList.remove('active'));
-        contents.forEach(c => c.classList.remove('active'));
-
-        trigger.classList.add('active');
-        if (target) {
-          document.getElementById(target)?.classList.add('active');
-        }
-      });
-    });
-
-    // Intersection Observer for the "Reveal" effect[cite: 3]
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('active');
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-  </script>
 </Layout>
 
 <style>
-  /* 
-     Scoping CSS here ensures it only affects the Guide page 
-     while pulling variables from Layout.astro[cite: 1]
-  */
-  .guide-page { 
-    padding: 8rem 2rem 4rem; 
-    max-width: 900px; 
-    margin: 0 auto; 
-    color: var(--forest); 
+  .guide-page {
+    padding: 6rem 2rem 4rem;
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--forest);
   }
 
-  .guide-header { 
-    text-align: center; 
-    margin-bottom: 4rem; 
+  .guide-header {
+    text-align: center;
+    margin-bottom: 3rem;
   }
 
-  .eyebrow { 
-    text-transform: uppercase; 
-    letter-spacing: 3px; 
-    font-size: 0.8rem; 
-    color: var(--sage); 
-    display: block; 
-    margin-bottom: 0.5rem;
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.8rem;
+    color: var(--sage);
+    display: block;
+    margin-bottom: 0.75rem;
   }
 
-  .tabs { 
-    display: flex; 
-    gap: 1rem; 
-    border-bottom: 1px solid rgba(0,0,0,0.1); 
-    margin-bottom: 2.5rem; 
-    justify-content: center; 
-    flex-wrap: wrap;
+  .link-list {
+    display: grid;
+    gap: 1rem;
   }
 
-  .tab-trigger { 
-    padding: 1rem 1.5rem; 
-    border: none; 
-    background: none; 
-    cursor: pointer;
-    font-family: 'Inter', sans-serif; 
-    font-weight: 500; 
-    color: #666;
-    transition: all 0.3s ease;
-    border-bottom: 2px solid transparent;
+  .guide-link {
+    display: block;
+    padding: 1.5rem 1.75rem;
+    border-radius: 18px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--forest);
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .tab-trigger.active { 
-    color: var(--forest); 
-    border-bottom: 2px solid var(--forest); 
-  }
-
-  .tab-content { 
-    display: none; 
-  }
-
-  .tab-content.active { 
-    display: block; 
-    animation: fadeIn 0.5s ease forwards; 
-  }
-
-  .info-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-    gap: 1.5rem; 
-    margin-top: 1.5rem; 
-  }
-
-  .info-card { 
-    background: white; 
-    padding: 2rem; 
-    border-radius: 16px; 
-    box-shadow: 0 4px 20px rgba(0,0,0,0.04); 
-    border: 1px solid rgba(0,0,0,0.02);
-  }
-
-  .guide-list { padding-left: 1.2rem; }
-  .guide-list li { margin-bottom: 0.8rem; line-height: 1.6; }
-
-  @keyframes fadeIn { 
-    from { opacity: 0; transform: translateY(10px); } 
-    to { opacity: 1; transform: translateY(0); } 
+  .guide-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
   }
 </style>
