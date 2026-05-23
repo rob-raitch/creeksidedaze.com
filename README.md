@@ -1,3 +1,7 @@
+# Rob Aitchison
+
+This is a project for the property owners started as a Google Gemini "vibe code" and then transitioned to copilot within VSCode. Keeping the template README contents below here.
+
 # Astro Starter Kit: Minimal
 
 ```sh
