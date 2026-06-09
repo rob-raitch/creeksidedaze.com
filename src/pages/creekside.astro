@@ -23,8 +23,6 @@ import Gallery from './components/Gallery.astro';
     </section>
 
     <Gallery />
-
-    </section>
   </main>
 
   <script is:inline>
@@ -108,7 +106,16 @@ import Gallery from './components/Gallery.astro';
   .filter-btn.active { background: #2d3e33; color: white; border-color: #2d3e33; }
 
   /* Gallery Grid */
-  .gallery-wrapper { column-count: 2; column-gap: 1.5rem; }
+  .gallery-wrapper { 
+    column-count: 2; 
+    column-gap: 1.5rem; 
+    display: block !important; /* Ensure the container isn't hidden */
+  }
+  @media (max-width: 600px) {
+    .gallery-wrapper {
+      column-count: 1;
+    }
+  }
   @media (min-width: 1024px) { .gallery-wrapper { column-count: 3; } }
 
   /* 1. Force visibility so they don't disappear */
@@ -118,12 +125,6 @@ import Gallery from './components/Gallery.astro';
     display: block; 
     opacity: 1 !important; /* Force them to show */
     transform: none !important;
-  }
-
-  .gallery-wrapper { 
-    column-count: 2; 
-    column-gap: 1.5rem; 
-    display: block !important; /* Ensure the container isn't hidden */
   }
 
   .gallery-item img {
