@@ -53,26 +53,69 @@ const isHome = pathname === "/" || pathname === "";
 			<button class="next" id="next-btn" aria-label="Next image">&#10095;</button>
 			
 			<img class="lightbox-content" id="lightbox-img">
+			<div id="lightbox-spatial-frame">
+				<spatial-photo id="lightbox-spatial" fit="contain" sensitivity="0.075" snappiness="5.5"></spatial-photo>
+				<div class="spatial-letterbox" aria-hidden="true"></div>
+			</div>
+			<button id="spatial-toggle" class="spatial-toggle" type="button" role="switch" aria-checked="false" aria-label="Spatial Mode" hidden>
+				<span class="spatial-toggle-label">Spatial Mode</span>
+				<span class="spatial-toggle-state">OFF</span>
+				<span class="spatial-toggle-track" aria-hidden="true"><span></span></span>
+			</button>
 			<div id="caption"></div>
 		</div>
 
 		<Footer />
 
+		<script>
+			import 'spatial-photos';
+		</script>
+
 		<script is:inline>
 			// Lightbox Controller
 			const lightbox = document.getElementById("lightbox");
 			const lightboxImg = document.getElementById("lightbox-img");
+			const spatialPhoto = document.getElementById("lightbox-spatial");
+			const spatialPhotoFrame = document.getElementById("lightbox-spatial-frame");
+			const spatialToggle = document.getElementById("spatial-toggle");
 			const captionText = document.getElementById("caption");
 			const counter = document.getElementById("image-counter");
 			let currentIndex = 0;
+			let isSpatialView = false;
 			let images = [];
 
-			function updateLightbox() {
+			function updateLightbox(keepSpatialMode = false) {
 				const currentImg = images[currentIndex];
+				isSpatialView = keepSpatialMode && isSpatialView && Boolean(currentImg.dataset.spatialSrc);
+				lightboxImg.style.display = isSpatialView ? "none" : "block";
+				spatialPhotoFrame.style.display = isSpatialView ? "block" : "none";
+				if (isSpatialView) {
+					spatialPhoto.setAttribute("src", currentImg.dataset.spatialSrc);
+				} else {
+					spatialPhoto.removeAttribute("src");
+				}
+				spatialToggle.hidden = !currentImg.dataset.spatialSrc;
+				spatialToggle.classList.toggle("is-on", isSpatialView);
+				spatialToggle.querySelector(".spatial-toggle-state").textContent = isSpatialView ? "ON" : "OFF";
+				spatialToggle.setAttribute("aria-checked", String(isSpatialView));
 				lightboxImg.src = currentImg.src;
 				captionText.innerHTML = currentImg.alt;
 				if(counter) counter.innerHTML = `${currentIndex + 1} / ${images.length}`;
 			}
+
+			spatialToggle.onclick = (e) => {
+				e.stopPropagation();
+				const spatialSrc = images[currentIndex]?.dataset.spatialSrc;
+				if (!spatialSrc) return;
+
+				isSpatialView = !isSpatialView;
+				lightboxImg.style.display = isSpatialView ? "none" : "block";
+				spatialPhotoFrame.style.display = isSpatialView ? "block" : "none";
+				if (isSpatialView) spatialPhoto.setAttribute("src", spatialSrc);
+				spatialToggle.classList.toggle("is-on", isSpatialView);
+				spatialToggle.querySelector(".spatial-toggle-state").textContent = isSpatialView ? "ON" : "OFF";
+				spatialToggle.setAttribute("aria-checked", String(isSpatialView));
+			};
 
 			// Initialize Lightbox listeners
 			function initGallery() {
@@ -88,6 +131,15 @@ const isHome = pathname === "/" || pathname === "";
 				images = visibleItems.length > 0 ? Array.from(visibleItems) : Array.from(allItems);
 				
 				images.forEach((img, index) => {
+					const imageUrl = new URL(img.src);
+					const imageName = imageUrl.pathname.split('/').pop();
+					if (imageName) {
+						img.dataset.spatialSrc = new URL(
+							`spatial/${imageName.replace(/\.[^.]+$/, ".spatial")}`,
+							imageUrl
+						).href;
+					}
+
 					img.onclick = () => {
 						currentIndex = index;
 						updateLightbox();
@@ -103,13 +155,13 @@ const isHome = pathname === "/" || pathname === "";
 			document.getElementById("next-btn").onclick = (e) => {
 				e.stopPropagation();
 				currentIndex = (currentIndex + 1) % images.length;
-				updateLightbox();
+				updateLightbox(true);
 			};
 
 			document.getElementById("prev-btn").onclick = (e) => {
 				e.stopPropagation();
 				currentIndex = (currentIndex - 1 + images.length) % images.length;
-				updateLightbox();
+				updateLightbox(true);
 			};
 
 			// Close Logic[cite: 1]
@@ -118,7 +170,7 @@ const isHome = pathname === "/" || pathname === "";
 			lightbox.onclick = (e) => { if(e.target === lightbox) lightbox.style.display = "none"; };
 			
 			document.addEventListener('keydown', (e) => {
-				if (lightbox.style.display === "block") {
+				if (lightbox.style.display === "flex") {
 					if (e.key === "ArrowRight") document.getElementById("next-btn").click();
 					if (e.key === "ArrowLeft") document.getElementById("prev-btn").click();
 					if (e.key === "Escape") closeBtn.click();
@@ -242,6 +294,131 @@ const isHome = pathname === "/" || pathname === "";
 		box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 	}
 
+	#lightbox-spatial-frame {
+		display: none;
+		position: relative;
+		z-index: 1;
+		width: min(90vw, 1100px);
+		height: 65vh;
+		max-height: 700px;
+		overflow: hidden;
+		border-radius: 8px;
+		box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+	}
+
+	#lightbox-spatial {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border-radius: inherit;
+	}
+
+	.spatial-letterbox {
+		position: absolute;
+		z-index: 1;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow:
+			inset 0 30px #07090c,
+			inset 0 -30px #07090c,
+			inset 22px 0 #07090c,
+			inset -22px 0 #07090c;
+		pointer-events: none;
+	}
+
+	.spatial-toggle {
+		position: absolute;
+		top: 24px;
+		right: 82px;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.65rem;
+		padding: 0.55rem 0.7rem 0.55rem 0.9rem;
+		border: 1px solid rgba(255,255,255,0.24);
+		border-radius: 999px;
+		background: rgba(255,255,255,0.1);
+		color: white;
+		font: 500 0.78rem 'Inter', sans-serif;
+		cursor: pointer;
+		backdrop-filter: blur(8px);
+		transition: background 180ms ease, border-color 180ms ease;
+	}
+
+	.spatial-toggle[hidden] {
+		display: none;
+	}
+
+	.spatial-toggle:hover,
+	.spatial-toggle:focus-visible {
+		background: rgba(255,255,255,0.18);
+		border-color: rgba(255,255,255,0.5);
+	}
+
+	.spatial-toggle:focus-visible {
+		outline: 2px solid #b8d2a4;
+		outline-offset: 3px;
+	}
+
+	.spatial-toggle-label {
+		font-size: 0.82rem;
+		white-space: nowrap;
+	}
+
+	.spatial-toggle-state {
+		min-width: 2.2em;
+		color: rgba(255,255,255,0.72);
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-align: right;
+	}
+
+	.spatial-toggle-track {
+		display: flex;
+		align-items: center;
+		width: 2.3rem;
+		height: 1.3rem;
+		padding: 0.15rem;
+		border-radius: 999px;
+		background: rgba(255,255,255,0.28);
+		transition: background 180ms ease;
+	}
+
+	.spatial-toggle-track span {
+		width: 1rem;
+		height: 1rem;
+		border-radius: 50%;
+		background: white;
+		box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+		transition: transform 180ms ease;
+	}
+
+	.spatial-toggle.is-on {
+		background: rgba(37,83,54,0.82);
+		border-color: rgba(175,220,158,0.7);
+	}
+
+	.spatial-toggle.is-on .spatial-toggle-state {
+		color: #d6f4c6;
+	}
+
+	.spatial-toggle.is-on .spatial-toggle-track {
+		background: #91c47b;
+	}
+
+	.spatial-toggle.is-on .spatial-toggle-track span {
+		transform: translateX(1rem);
+	}
+
+	@media (max-width: 480px) {
+		.spatial-toggle {
+			top: 18px;
+			right: 70px;
+			gap: 0.45rem;
+			padding: 0.5rem 0.55rem;
+		}
+	}
+
 	#caption {
 		margin-top: 20px;        /* Space between image and text */
 		width: 100%;
@@ -268,7 +445,7 @@ const isHome = pathname === "/" || pathname === "";
 	.close { position: absolute; top: 15px; right: 35px; color: white; font-size: 40px; cursor: pointer; }
 
 	.prev, .next {
-		cursor: pointer; position: absolute; top: 50%; padding: 16px;
+		cursor: pointer; position: absolute; z-index: 2; top: 50%; padding: 16px;
 		color: white; font-size: 30px; background: transparent; border: none;
 	}
 	.next { right: 20px; } .prev { left: 20px; }
