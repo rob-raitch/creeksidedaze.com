@@ -6,10 +6,10 @@ const baseURL = import.meta.env.BASE_URL;
   <div class="footer-content">
     <span class="subtitle">Looking for a different view?</span>
     <h2>Visit Grand Daze</h2>
-    <p>Our sister property in the Bahamas is coming soon.</p>
+    <p>Our sister property in the Bahamas.</p>
     
     <a href="https://granddaze.com" target="_blank" rel="noopener noreferrer" class="footer-btn">
-       Grand Daze Site↗
+      <img src={`${baseURL}grand-daze-square-logo-white-rgb-900px-w-300ppi.png`} alt="Visit Grand Daze" />
     </a>
 
     <div class="social-links">
@@ -62,13 +62,13 @@ const baseURL = import.meta.env.BASE_URL;
 
   .footer-btn {
     display: inline-block;
-    padding: 1.2rem 2.5rem;
-    background-color: transparent;
-    color: white;
-    border: 1px solid white;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .footer-btn img {
+    display: block;
+    width: clamp(120px, 30vw, 180px);
+    height: auto;
   }
 
   .footer-credit-link {
@@ -85,8 +85,8 @@ const baseURL = import.meta.env.BASE_URL;
   }
 
   .footer-btn:hover {
-    background-color: white;
-    color: #2d3e33;
+    opacity: 0.85;
+    transform: translateY(-3px);
   }
 
   .social-links {
