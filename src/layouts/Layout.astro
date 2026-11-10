@@ -57,19 +57,23 @@ const isHome = pathname === "/" || pathname === "";
 				<spatial-photo id="lightbox-spatial" fit="contain" sensitivity="0.075" snappiness="5.5"></spatial-photo>
 				<div class="spatial-letterbox" aria-hidden="true"></div>
 			</div>
+			<!-- Spatial mode toggle temporarily disabled.
 			<button id="spatial-toggle" class="spatial-toggle" type="button" role="switch" aria-checked="false" aria-label="Spatial Mode" hidden>
 				<span class="spatial-toggle-label">Spatial Mode</span>
 				<span class="spatial-toggle-state">OFF</span>
 				<span class="spatial-toggle-track" aria-hidden="true"><span></span></span>
 			</button>
+			-->
 			<div id="caption"></div>
 		</div>
 
 		<Footer />
 
+		<!-- Enable spatial-photos again with the spatial mode toggle.
 		<script>
 			import 'spatial-photos';
 		</script>
+		-->
 
 		<script is:inline>
 			// Lightbox Controller
@@ -80,13 +84,14 @@ const isHome = pathname === "/" || pathname === "";
 			const spatialToggle = document.getElementById("spatial-toggle");
 			const captionText = document.getElementById("caption");
 			const counter = document.getElementById("image-counter");
+			const desktopSpatialQuery = window.matchMedia("(min-width: 769px)");
 			let currentIndex = 0;
 			let isSpatialView = false;
 			let images = [];
 
 			function updateLightbox(keepSpatialMode = false) {
 				const currentImg = images[currentIndex];
-				isSpatialView = keepSpatialMode && isSpatialView && Boolean(currentImg.dataset.spatialSrc);
+				isSpatialView = keepSpatialMode && isSpatialView && desktopSpatialQuery.matches && Boolean(currentImg.dataset.spatialSrc);
 				lightboxImg.style.display = isSpatialView ? "none" : "block";
 				spatialPhotoFrame.style.display = isSpatialView ? "block" : "none";
 				if (isSpatialView) {
@@ -94,28 +99,36 @@ const isHome = pathname === "/" || pathname === "";
 				} else {
 					spatialPhoto.removeAttribute("src");
 				}
-				spatialToggle.hidden = !currentImg.dataset.spatialSrc;
-				spatialToggle.classList.toggle("is-on", isSpatialView);
-				spatialToggle.querySelector(".spatial-toggle-state").textContent = isSpatialView ? "ON" : "OFF";
-				spatialToggle.setAttribute("aria-checked", String(isSpatialView));
+				if (spatialToggle) {
+					spatialToggle.hidden = !desktopSpatialQuery.matches || !currentImg.dataset.spatialSrc;
+					spatialToggle.classList.toggle("is-on", isSpatialView);
+					spatialToggle.querySelector(".spatial-toggle-state").textContent = isSpatialView ? "ON" : "OFF";
+					spatialToggle.setAttribute("aria-checked", String(isSpatialView));
+				}
 				lightboxImg.src = currentImg.src;
 				captionText.innerHTML = currentImg.alt;
 				if(counter) counter.innerHTML = `${currentIndex + 1} / ${images.length}`;
 			}
 
-			spatialToggle.onclick = (e) => {
-				e.stopPropagation();
-				const spatialSrc = images[currentIndex]?.dataset.spatialSrc;
-				if (!spatialSrc) return;
+			if (spatialToggle) {
+				spatialToggle.onclick = (e) => {
+					e.stopPropagation();
+					const spatialSrc = images[currentIndex]?.dataset.spatialSrc;
+					if (!desktopSpatialQuery.matches || !spatialSrc) return;
 
-				isSpatialView = !isSpatialView;
-				lightboxImg.style.display = isSpatialView ? "none" : "block";
-				spatialPhotoFrame.style.display = isSpatialView ? "block" : "none";
-				if (isSpatialView) spatialPhoto.setAttribute("src", spatialSrc);
-				spatialToggle.classList.toggle("is-on", isSpatialView);
-				spatialToggle.querySelector(".spatial-toggle-state").textContent = isSpatialView ? "ON" : "OFF";
-				spatialToggle.setAttribute("aria-checked", String(isSpatialView));
-			};
+					isSpatialView = !isSpatialView;
+					lightboxImg.style.display = isSpatialView ? "none" : "block";
+					spatialPhotoFrame.style.display = isSpatialView ? "block" : "none";
+					if (isSpatialView) spatialPhoto.setAttribute("src", spatialSrc);
+					spatialToggle.classList.toggle("is-on", isSpatialView);
+					spatialToggle.querySelector(".spatial-toggle-state").textContent = isSpatialView ? "ON" : "OFF";
+					spatialToggle.setAttribute("aria-checked", String(isSpatialView));
+				};
+			}
+
+			desktopSpatialQuery.addEventListener("change", () => {
+				if (images.length > 0) updateLightbox(true);
+			});
 
 			// Initialize Lightbox listeners
 			function initGallery() {
@@ -408,15 +421,6 @@ const isHome = pathname === "/" || pathname === "";
 
 	.spatial-toggle.is-on .spatial-toggle-track span {
 		transform: translateX(1rem);
-	}
-
-	@media (max-width: 480px) {
-		.spatial-toggle {
-			top: 18px;
-			right: 70px;
-			gap: 0.45rem;
-			padding: 0.5rem 0.55rem;
-		}
 	}
 
 	#caption {
